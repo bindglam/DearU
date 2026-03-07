@@ -137,6 +137,8 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
                         player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
 
                         player.sendMessage(Component.text("아이템을 지급하는데 실패했습니다. 다시 시도해주세요!").color(NamedTextColor.RED))
+
+                        main()
                     }
                 }
             }

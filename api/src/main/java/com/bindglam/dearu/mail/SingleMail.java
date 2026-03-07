@@ -23,7 +23,8 @@ public record SingleMail(
 
     @Override
     public boolean giveItem(@NotNull Player player) {
-        // TODO : 남은 인벤토리 공간 확인
+        if(player.getInventory().firstEmpty() == -1)
+            return false;
         player.getInventory().addItem(body);
         return true;
     }

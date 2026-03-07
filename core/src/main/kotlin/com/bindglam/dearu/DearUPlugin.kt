@@ -39,7 +39,7 @@ class DearUPlugin : JavaPlugin(), DearU {
     }
 
     private fun registerCommands() {
-        this.lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS, LifecycleEventHandler { commands ->
+        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS, LifecycleEventHandler { commands ->
             fun mailbox(name: String) {
                 commands.registrar().register(Commands.literal(name)
                     .executes { ctx ->

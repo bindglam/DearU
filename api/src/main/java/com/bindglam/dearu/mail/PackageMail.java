@@ -52,6 +52,7 @@ public record PackageMail(
         return json;
     }
 
+    @SuppressWarnings("unused")
     @ApiStatus.Internal
     public static @NotNull PackageMail deserialize(@NotNull JSONObject json) {
         MailSender sender = MailSender.server();

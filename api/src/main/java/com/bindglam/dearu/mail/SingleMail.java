@@ -41,6 +41,7 @@ public record SingleMail(
         return json;
     }
 
+    @SuppressWarnings("unused")
     @ApiStatus.Internal
     public static @NotNull SingleMail deserialize(@NotNull JSONObject json) {
         MailSender sender = MailSender.server();

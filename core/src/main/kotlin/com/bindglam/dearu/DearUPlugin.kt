@@ -3,6 +3,7 @@ package com.bindglam.dearu
 import com.bindglam.dearu.gui.MailboxGui
 import com.bindglam.dearu.manager.Context
 import com.bindglam.dearu.manager.DatabaseManager
+import com.bindglam.dearu.manager.LanguageManager
 import com.bindglam.dearu.manager.MailboxManager
 import com.bindglam.dearu.manager.MailboxManagerImpl
 import com.mojang.brigadier.Command
@@ -19,7 +20,7 @@ import java.io.File
 class DearUPlugin : JavaPlugin(), DearU {
     private lateinit var dearUConfig: DearUConfiguration
 
-    private val managers = listOf(DatabaseManager, MailboxManagerImpl)
+    private val managers = listOf(DatabaseManager, LanguageManager, MailboxManagerImpl)
 
     override fun onEnable() {
         DearUProvider.register(this)

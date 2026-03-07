@@ -6,6 +6,8 @@ import com.bindglam.dearu.manager.DatabaseManager
 import java.io.File
 
 class DearUConfiguration(file: File) : Configuration(file) {
+    val language = createPrimitiveField("language", "english")!!
+
     val database = Database()
     inner class Database {
         val sql = SQL()

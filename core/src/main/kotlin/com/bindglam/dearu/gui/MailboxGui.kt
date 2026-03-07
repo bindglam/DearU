@@ -1,6 +1,7 @@
 package com.bindglam.dearu.gui
 
 import com.bindglam.dearu.Mailbox
+import com.bindglam.dearu.manager.LanguageManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -25,22 +26,12 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
     companion object {
         private const val ITEMS_PER_PAGE = 9*4
 
-        private val LOADING_ICON = ItemStack.of(Material.CLOCK).apply { editMeta { meta ->
-            meta.displayName(Component.text("로딩 중...").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false))
-            meta.lore(listOf(Component.text("잠시만 기다려주세요!").color(NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)))
-        } }
         private val BLANK_SLOT = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE).apply { editMeta { meta -> meta.isHideTooltip = true } }
-        private val PREVIOUS_PAGE_BUTTON = ItemStack.of(Material.ARROW).apply { editMeta { meta ->
-            meta.displayName(Component.text("이전 페이지").color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false))
-        } }
-        private val NEXT_PAGE_BUTTON = ItemStack.of(Material.ARROW).apply { editMeta { meta ->
-            meta.displayName(Component.text("다음 페이지").color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false))
-        } }
 
         private val MAIL_ID_KEY = NamespacedKey("mailbox", "mail_id")
     }
 
-    private val inventory = Bukkit.createInventory(this, 9*6, Component.text("우편함"))
+    private val inventory = Bukkit.createInventory(this, 9*6, LanguageManager.lang().get("gui_mailbox_title"))
 
     private var page = 0
 
@@ -62,7 +53,10 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
 
         frame()
 
-        inventory.setItem(9*2+4, LOADING_ICON)
+        inventory.setItem(9*2+4, ItemStack.of(Material.CLOCK).apply { editMeta { meta ->
+            meta.displayName(LanguageManager.lang().get("gui_mailbox_loading_icon_name").decoration(TextDecoration.ITALIC, false))
+            meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_loading_icon_description").decoration(TextDecoration.ITALIC, false)))
+        } })
     }
 
     private fun main() {
@@ -70,8 +64,14 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
 
         mailbox.mails(ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).thenAccept { mails ->
             inventory.setItem(9*2+4, null)
-            inventory.setItem(9*5, PREVIOUS_PAGE_BUTTON.clone().apply { editMeta { meta -> meta.lore(listOf(Component.text("현재 페이지 : ${page+1}쪽").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false))) } })
-            inventory.setItem(9*5+8, NEXT_PAGE_BUTTON.clone().apply { editMeta { meta -> meta.lore(listOf(Component.text("현재 페이지 : ${page+1}쪽").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false))) } })
+            inventory.setItem(9*5, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
+                meta.displayName(LanguageManager.lang().get("gui_mailbox_previous_page_button_name").decoration(TextDecoration.ITALIC, false))
+                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_previous_page_button_description", page+1).decoration(TextDecoration.ITALIC, false)))
+            } })
+            inventory.setItem(9*5+8, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
+                meta.displayName(LanguageManager.lang().get("gui_mailbox_next_page_button_name").decoration(TextDecoration.ITALIC, false))
+                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_next_page_button_description", page+1).decoration(TextDecoration.ITALIC, false)))
+            } })
 
             for(i in 0..<ITEMS_PER_PAGE) {
                 val mail = mails[i]
@@ -86,7 +86,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
                         lore.add(Component.empty())
                         lore.add(Component.text("FROM. ${mail.mail().sender().displayName()}").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))
                         lore.add(Component.empty())
-                        lore.add(Component.text(">> 왼쪽 클릭으로 받기").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false).decorate(TextDecoration.BOLD))
+                        lore.add(LanguageManager.lang().get("gui_mailbox_mail_item_description_left_click_to_receive").decoration(TextDecoration.ITALIC, false))
                         meta.lore(lore)
                     }
                     editPersistentDataContainer { pdc -> pdc.set(MAIL_ID_KEY, PersistentDataType.INTEGER, mail.id()) }
@@ -136,7 +136,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
                     } else {
                         player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
 
-                        player.sendMessage(Component.text("아이템을 지급하는데 실패했습니다. 다시 시도해주세요!").color(NamedTextColor.RED))
+                        player.sendMessage(LanguageManager.lang().get("gui_mailbox_failed_to_give_mail_item"))
 
                         main()
                     }

@@ -10,8 +10,11 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.util.Calendar;
 
 public sealed interface Mail permits PackageMail, SingleMail {
+    int EXPIRY_DAYS = 3;
+
     @NotNull MailSender sender();
 
     @NotNull ItemStack body();
@@ -21,6 +24,13 @@ public sealed interface Mail permits PackageMail, SingleMail {
     @NotNull Timestamp createdAt();
 
     boolean giveItem(@NotNull Player player);
+
+    default Timestamp expiration() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createdAt());
+        calendar.add(Calendar.DAY_OF_MONTH, EXPIRY_DAYS);
+        return new Timestamp(calendar.getTimeInMillis());
+    }
 
     @ApiStatus.Internal
     @NotNull JSONObject serialize();

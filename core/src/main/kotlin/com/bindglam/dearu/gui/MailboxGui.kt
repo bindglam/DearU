@@ -20,6 +20,7 @@ import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.Calendar
 
 
 class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) : InventoryHolder, Listener {
@@ -75,6 +76,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
 
             for(i in 0..<ITEMS_PER_PAGE) {
                 val mail = mails[i]
+                val expiration = Calendar.getInstance().apply { time = mail.mail().expiration() }
 
                 inventory.setItem(9+i, mail.mail().body().apply {
                     editMeta { meta ->
@@ -85,6 +87,14 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
                         lore.add(Component.empty())
                         lore.add(Component.empty())
                         lore.add(Component.text("FROM. ${mail.mail().sender().displayName()}").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))
+                        lore.add(LanguageManager.lang().get("gui_mailbox_mail_item_description_expiration",
+                            "expiration_year" to expiration.get(Calendar.YEAR),
+                            "expiration_month" to expiration.get(Calendar.MONTH)+1,
+                            "expiration_day" to expiration.get(Calendar.DAY_OF_MONTH),
+                            "expiration_hours" to expiration.get(Calendar.HOUR_OF_DAY),
+                            "expiration_minutes" to expiration.get(Calendar.MINUTE),
+                            "expiration_seconds" to expiration.get(Calendar.SECOND)
+                        ).decorate(TextDecoration.ITALIC))
                         lore.add(Component.empty())
                         lore.add(LanguageManager.lang().get("gui_mailbox_mail_item_description_left_click_to_receive").decoration(TextDecoration.ITALIC, false))
                         meta.lore(lore)

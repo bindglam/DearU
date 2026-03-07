@@ -31,7 +31,9 @@ class DearUPlugin : JavaPlugin(), DearU {
 
         registerCommands()
 
-        managers.forEach { it.start(Context(this, dearUConfig)) }
+        server.asyncScheduler.runNow(this) {
+            managers.forEach { it.start(Context(this, dearUConfig)) }
+        }
 
         fun checkUpdate() {
             val checker = UpdateChecker("bindglam", "DearU")

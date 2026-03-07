@@ -20,7 +20,7 @@ public sealed interface MailSender {
     record Server() implements MailSender {
         @Override
         public @NotNull String displayName() {
-            return "서버";
+            return "Server";
         }
     }
 

@@ -6,6 +6,7 @@ import com.bindglam.dearu.manager.DatabaseManager
 import com.bindglam.dearu.manager.LanguageManager
 import com.bindglam.dearu.manager.MailboxManager
 import com.bindglam.dearu.manager.MailboxManagerImpl
+import com.bindglam.dearu.utils.UpdateChecker
 import com.mojang.brigadier.Command
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.handler.LifecycleEventHandler
@@ -31,6 +32,18 @@ class DearUPlugin : JavaPlugin(), DearU {
         registerCommands()
 
         managers.forEach { it.start(Context(this, dearUConfig)) }
+
+        fun checkUpdate() {
+            val checker = UpdateChecker("bindglam", "DearU")
+
+            if(checker.check(pluginMeta.version)) {
+                logger.info("A new version of DearU is available!")
+                logger.info("https://github.com/bindglam/DearU/releases")
+            } else {
+                logger.info("You are using the latest version of DearU!")
+            }
+        }
+        server.asyncScheduler.runNow(this) { _ -> checkUpdate() }
     }
 
     override fun onDisable() {

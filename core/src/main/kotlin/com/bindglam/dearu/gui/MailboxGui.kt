@@ -127,13 +127,15 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
             else -> {
                 if(!clickedItem.persistentDataContainer.has(MAIL_ID_KEY)) return
 
-                player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1f, 1.2f)
-
                 loading()
                 mailbox.mail(clickedItem.persistentDataContainer.get(MAIL_ID_KEY, PersistentDataType.INTEGER)!!).thenAccept { mail ->
                     if(mail.mail().giveItem(player)) {
+                        player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1f, 1.2f)
+
                         mailbox.removeMail(mail.id()).thenRun { main() }
                     } else {
+                        player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+
                         player.sendMessage(Component.text("아이템을 지급하는데 실패했습니다. 다시 시도해주세요!").color(NamedTextColor.RED))
                     }
                 }

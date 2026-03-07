@@ -45,18 +45,22 @@ class DearUPlugin : JavaPlugin(), DearU {
 
     private fun registerCommands() {
         this.lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS, LifecycleEventHandler { commands ->
-            commands.registrar().register(Commands.literal("mailbox")
-                .executes { ctx ->
-                    val executor = ctx.source.executor ?: ctx.source.sender
-                    if(executor !is Player) {
-                        executor.sendMessage(Component.text("이 명령어는 플레이어만 사용할 수 있습니다.").color(NamedTextColor.RED))
+            fun mailbox(name: String) {
+                commands.registrar().register(Commands.literal(name)
+                    .executes { ctx ->
+                        val executor = ctx.source.executor ?: ctx.source.sender
+                        if(executor !is Player) {
+                            executor.sendMessage(Component.text("이 명령어는 플레이어만 사용할 수 있습니다.").color(NamedTextColor.RED))
+                            return@executes Command.SINGLE_SUCCESS
+                        }
+
+                        executor.openInventory(MailboxGui(this, MailboxManagerImpl.getMailbox(executor.uniqueId)).inventory)
                         return@executes Command.SINGLE_SUCCESS
                     }
-
-                    executor.openInventory(MailboxGui(this, MailboxManagerImpl.getMailbox(executor.uniqueId)).inventory)
-                    return@executes Command.SINGLE_SUCCESS
-                }
-                .build())
+                    .build())
+            }
+            mailbox("mailbox")
+            dearUConfig.commands.mailbox.aliases.value().forEach { mailbox(it) }
 
             commands.registrar().register(Commands.literal("testmailbox")
                 .executes { ctx ->

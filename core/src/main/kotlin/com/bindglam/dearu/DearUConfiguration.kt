@@ -28,4 +28,12 @@ class DearUConfiguration(file: File) : Configuration(file) {
             }
         }
     }
+
+    val commands = Commands()
+    inner class Commands {
+        val mailbox = Mailbox()
+        inner class Mailbox {
+            val aliases = createPrimitiveField("commands.mailbox.aliases", listOf<String>())!!
+        }
+    }
 }

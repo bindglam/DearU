@@ -3,6 +3,7 @@ package com.bindglam.dearu.manager
 import com.bindglam.database.Database
 import com.bindglam.database.MySQLDatabase
 import com.bindglam.database.SQLiteDatabase
+import com.bindglam.dearu.DearUConfiguration
 import java.io.File
 import java.sql.Connection
 import java.sql.SQLException
@@ -13,16 +14,15 @@ object DatabaseManager : Managerial {
         get() = _sqlDatabase
 
     override fun start(context: Context) {
-        _sqlDatabase = when(context.config.getString("database.sql.type")) {
-            "SQLITE" -> SQLiteDatabase(File(context.plugin.dataFolder, "database.db"),
-                context.config.getBoolean("database.sql.SQLITE.auto-commit"), context.config.getInt("database.sql.SQLITE.valid-timeout"))
-            "MYSQL" -> MySQLDatabase(context.config.getString("database.sql.MYSQL.host"), context.config.getString("database.sql.MYSQL.database"), context.config.getString("database.sql.MYSQL.username"), context.config.getString("database.sql.MYSQL.password"),
-                context.config.getInt("database.sql.MYSQL.max-pool-size"))
-            else -> error("Unknown database type")
-        }.also { it.start() }
+        _sqlDatabase = context.config.database.sql.type.value().provider(context).also { it.start() }
     }
 
     override fun end(context: Context) {
         _sqlDatabase.stop()
+    }
+
+    enum class SQLDatabaseType(val provider: (Context) -> Database<Connection, SQLException>) {
+        SQLITE({ ctx -> SQLiteDatabase(File(ctx.plugin.dataFolder, "database.db"), ctx.config.database.sql.sqlite.autoCommit.value(), ctx.config.database.sql.sqlite.validTimeout.value()) }),
+        MYSQL({ ctx -> MySQLDatabase(ctx.config.database.sql.mysql.host.value(), ctx.config.database.sql.mysql.database.value(), ctx.config.database.sql.mysql.username.value(), ctx.config.database.sql.mysql.password.value(), ctx.config.database.sql.mysql.maxPoolSize.value()) })
     }
 }

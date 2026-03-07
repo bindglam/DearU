@@ -18,25 +18,29 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 
 
 class DearUPlugin : JavaPlugin(), DearU {
+    private lateinit var dearUConfig: DearUConfiguration
+
     private val managers = listOf(DatabaseManager, MailboxManagerImpl)
 
     override fun onEnable() {
-        saveDefaultConfig()
-
         DearUProvider.register(this)
+
+        dearUConfig = DearUConfiguration(File(dataFolder, "config.yml"))
+            .also { it.load() }
 
         registerCommands()
 
-        managers.forEach { it.start(Context(this, config)) }
+        managers.forEach { it.start(Context(this, dearUConfig)) }
     }
 
     override fun onDisable() {
         DearUProvider.unregister()
 
-        managers.forEach { it.end(Context(this, config)) }
+        managers.forEach { it.end(Context(this, dearUConfig)) }
     }
 
     private fun registerCommands() {

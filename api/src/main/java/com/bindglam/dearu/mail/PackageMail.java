@@ -34,8 +34,20 @@ public record PackageMail(
 
     @Override
     public boolean giveItem(@NotNull Player player) {
-        // TODO : 남은 인벤토리 공간 확인
-        packageBody.contents.forEach(item -> player.getInventory().addItem(item));
+        var inventory = player.getInventory();
+        var storageContents = inventory.getStorageContents();
+
+        int emptySlots = 0;
+        for(var content : storageContents) {
+            if(content == null || content.isEmpty()) {
+                emptySlots++;
+            }
+        }
+
+        if(emptySlots < packageBody.contents().size())
+            return false;
+
+        packageBody.contents().forEach(inventory::addItem);
         return true;
     }
 

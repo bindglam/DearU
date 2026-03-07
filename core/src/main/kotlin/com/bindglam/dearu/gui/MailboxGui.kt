@@ -66,11 +66,11 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
             inventory.setItem(9*2+4, null)
             inventory.setItem(9*5, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
                 meta.displayName(LanguageManager.lang().get("gui_mailbox_previous_page_button_name").decoration(TextDecoration.ITALIC, false))
-                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_previous_page_button_description", page+1).decoration(TextDecoration.ITALIC, false)))
+                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_previous_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
             } })
             inventory.setItem(9*5+8, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
                 meta.displayName(LanguageManager.lang().get("gui_mailbox_next_page_button_name").decoration(TextDecoration.ITALIC, false))
-                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_next_page_button_description", page+1).decoration(TextDecoration.ITALIC, false)))
+                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_next_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
             } })
 
             for(i in 0..<ITEMS_PER_PAGE) {

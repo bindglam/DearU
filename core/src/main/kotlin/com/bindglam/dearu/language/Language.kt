@@ -15,7 +15,7 @@ class Language(val name: String) {
         }
     }
 
-    fun get(key: String, vararg args: Any): Component {
+    fun get(key: String, vararg args: Pair<String, Any>): Component {
         val langComp = this.map[key]
         if (langComp != null) return langComp.component(*args)
         return Component.text(key)

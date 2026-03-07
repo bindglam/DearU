@@ -1,6 +1,7 @@
 package com.bindglam.dearu.mail;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -11,7 +12,8 @@ public sealed interface MailSender {
     record Player(@NotNull UUID uuid) implements MailSender {
         @Override
         public @NotNull String displayName() {
-            return Bukkit.getOfflinePlayer(uuid).getName(); // TODO : optimize
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            return offlinePlayer.getName() != null ? offlinePlayer.getName() : "Unknown"; // TODO : optimize
         }
     }
 

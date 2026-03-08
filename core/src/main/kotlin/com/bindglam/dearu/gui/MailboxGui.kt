@@ -28,6 +28,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
     companion object {
         private const val ITEMS_PER_PAGE = 9*4
 
+        private val ICON = ItemBuilder.playerHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGVhYjQxZTNjYjg3NjllYmFkMmE4MjFkNTVjY2I4NWE0YTk0MGRkNWM2ZThiZjczOGIwYjEyMmY4NzkxZSJ9fX0=").hideTooltip().build()
         private val BLANK_SLOT = ItemBuilder.of(Material.GRAY_STAINED_GLASS_PANE).hideTooltip().build()
 
         private val MAIL_ID_KEY = NamespacedKey("mailbox", "mail_id")
@@ -48,6 +49,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
             inventory.setItem(i, BLANK_SLOT)
             inventory.setItem(9*5+i, BLANK_SLOT)
         }
+        inventory.setItem(4, ICON)
     }
 
     private fun loading() {

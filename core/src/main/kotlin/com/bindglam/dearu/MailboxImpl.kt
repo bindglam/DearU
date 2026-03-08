@@ -16,6 +16,10 @@ class MailboxImpl(private val owner: UUID) : Mailbox {
             connection.createStatement().use { statement ->
                 statement.execute("CREATE TABLE IF NOT EXISTS ${MailboxManagerImpl.TABLE_NAME}" +
                         "(id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT */, owner VARCHAR(36), data JSON, createdAt TIMESTAMP)")
+                try {
+                    statement.execute("CREATE INDEX idx_createdAt ON ${MailboxManagerImpl.TABLE_NAME}(createdAt)")
+                } catch (_: Exception) {
+                }
             }
         }
     }

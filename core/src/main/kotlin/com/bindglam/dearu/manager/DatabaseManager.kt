@@ -22,7 +22,7 @@ object DatabaseManager : Managerial {
     }
 
     enum class SQLDatabaseType(val provider: (Context) -> Database<Connection, SQLException>) {
-        SQLITE({ ctx -> SQLiteDatabase(File(ctx.plugin.dataFolder, "database.db"), ctx.config.database.sql.sqlite.autoCommit.value(), ctx.config.database.sql.sqlite.validTimeout.value()) }),
+        SQLITE({ ctx -> SQLiteDatabase(File(ctx.plugin.dataFolder, "database.db"), true, ctx.config.database.sql.sqlite.validTimeout.value()) }),
         MYSQL({ ctx -> MySQLDatabase(ctx.config.database.sql.mysql.host.value(), ctx.config.database.sql.mysql.database.value(), ctx.config.database.sql.mysql.username.value(), ctx.config.database.sql.mysql.password.value(), ctx.config.database.sql.mysql.maxPoolSize.value()) })
     }
 }

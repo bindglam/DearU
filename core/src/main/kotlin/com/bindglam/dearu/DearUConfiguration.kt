@@ -16,7 +16,7 @@ class DearUConfiguration(file: File) : Configuration(file) {
 
             val sqlite = SQLite()
             inner class SQLite {
-                val autoCommit = createPrimitiveField("database.sql.SQLITE.auto-commit", true)!!
+                //val autoCommit = createPrimitiveField("database.sql.SQLITE.auto-commit", true)!!
                 val validTimeout = createPrimitiveField("database.sql.SQLITE.valid-timeout", 60000)!!
             }
 

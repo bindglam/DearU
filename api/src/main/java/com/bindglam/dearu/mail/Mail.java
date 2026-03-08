@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 public sealed interface Mail permits PackageMail, SingleMail {
     int EXPIRY_DAYS = 3;
@@ -19,9 +20,11 @@ public sealed interface Mail permits PackageMail, SingleMail {
 
     @NotNull ItemStack body();
 
-    @NotNull String comment();
+    @Nullable String comment();
 
     @NotNull Timestamp createdAt();
+
+    @Nullable List<String> allowedServers();
 
     boolean giveItem(@NotNull Player player);
 
@@ -36,12 +39,12 @@ public sealed interface Mail permits PackageMail, SingleMail {
     @NotNull JSONObject serialize();
 
 
-    static @NotNull Mail single(MailSender sender, ItemStack body, @Nullable String comment) {
-        return new SingleMail(sender, body, comment == null ? "" : comment, new Timestamp(System.currentTimeMillis()));
+    static @NotNull Mail single(MailSender sender, ItemStack body, @Nullable String comment, @Nullable List<String> allowedServers) {
+        return new SingleMail(sender, body, comment, new Timestamp(System.currentTimeMillis()), allowedServers);
     }
 
-    static @NotNull Mail packaged(MailSender sender, PackageMail.Body body, @Nullable String comment) {
-        return new PackageMail(sender, body, comment == null ? "" : comment, new Timestamp(System.currentTimeMillis()));
+    static @NotNull Mail packaged(MailSender sender, PackageMail.Body body, @Nullable String comment, @Nullable List<String> allowedServers) {
+        return new PackageMail(sender, body, comment, new Timestamp(System.currentTimeMillis()), allowedServers);
     }
 
     @ApiStatus.Internal

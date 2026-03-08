@@ -5,16 +5,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public record SingleMail(
         @NotNull MailSender sender,
         @NotNull ItemStack body,
-        @NotNull String comment,
-        @NotNull Timestamp createdAt
+        @Nullable String comment,
+        @NotNull Timestamp createdAt,
+        @Nullable List<String> allowedServers
 ) implements Mail {
     @Override
     public @NotNull ItemStack body() {
@@ -37,8 +41,11 @@ public record SingleMail(
         if(sender instanceof MailSender.Player(UUID uuid))
             json.put("sender", uuid.toString());
         json.put("body", Base64.getEncoder().encodeToString(body.serializeAsBytes()));
-        json.put("comment", comment);
+        if(comment != null)
+            json.put("comment", comment);
         json.put("createdAt", createdAt.getTime());
+        if(allowedServers != null)
+            json.put("allowedServers", allowedServers);
         return json;
     }
 
@@ -49,8 +56,13 @@ public record SingleMail(
         if(json.containsKey("sender"))
             sender = MailSender.player(UUID.fromString(json.getString("sender")));
         ItemStack body = ItemStack.deserializeBytes(Base64.getDecoder().decode(json.getString("body")));
-        String comment = json.getString("comment");
+        String comment = null;
+        if(json.containsKey("comment"))
+            comment = json.getString("comment");
         Timestamp createdAt = new Timestamp(json.getLong("createdAt"));
-        return new SingleMail(sender, body, comment, createdAt);
+        List<String> allowedServers = null;
+        if(json.containsKey("allowedServers"))
+            allowedServers = json.getJSONArray("allowedServers").stream().map(Objects::toString).toList();
+        return new SingleMail(sender, body, comment, createdAt, allowedServers);
     }
 }

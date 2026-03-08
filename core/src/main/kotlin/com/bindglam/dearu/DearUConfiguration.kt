@@ -7,6 +7,7 @@ import java.io.File
 
 class DearUConfiguration(file: File) : Configuration(file) {
     val language = createPrimitiveField("language", "english")!!
+    val serverName = createPrimitiveField("server-name", "A Minecraft Server")!!
 
     val database = Database()
     inner class Database {

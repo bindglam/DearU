@@ -1,8 +1,11 @@
 package com.bindglam.dearu.gui
 
+import com.bindglam.dearu.DearUPlugin
+import com.bindglam.dearu.DearUProvider
 import com.bindglam.dearu.Mailbox
 import com.bindglam.dearu.manager.LanguageManager
 import com.bindglam.dearu.utils.ItemBuilder
+import com.bindglam.dearu.utils.plugin
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -84,9 +87,11 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
                 inventory.setItem(9+i, mail.mail().body().apply {
                     editMeta { meta ->
                         val lore = ArrayList(meta.lore() ?: listOf())
-                        lore.add(Component.empty())
-                        lore.add(Component.empty())
-                        lore.add(Component.text("\"${mail.mail().comment()}\"").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))
+                        if(mail.mail().comment() != null) {
+                            lore.add(Component.empty())
+                            lore.add(Component.empty())
+                            lore.add(Component.text("\"${mail.mail().comment()}\"").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))
+                        }
                         lore.add(Component.empty())
                         lore.add(Component.empty())
                         lore.add(Component.text("FROM. ${mail.mail().sender().displayName()}").color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))
@@ -140,15 +145,24 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
             else -> {
                 if(!clickedItem.persistentDataContainer.has(MAIL_ID_KEY)) return
 
+                player.playSound(player, Sound.UI_BUTTON_CLICK, 1f, 1.5f)
+
                 loading()
                 mailbox.mail(clickedItem.persistentDataContainer.get(MAIL_ID_KEY, PersistentDataType.INTEGER)!!).thenAccept { mail ->
+                    if(mail.mail().allowedServers() != null && !mail.mail().allowedServers()!!.contains(DearUProvider.get().plugin().dearUConfig.serverName.value())) {
+                        player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+                        player.sendMessage(LanguageManager.lang().get("gui_mailbox_failed_to_give_because_of_server"))
+
+                        main()
+                        return@thenAccept
+                    }
+
                     if(mail.mail().giveItem(player)) {
                         player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1f, 1.2f)
 
                         mailbox.removeMail(mail.id()).thenRun { main() }
                     } else {
                         player.playSound(player, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
-
                         player.sendMessage(LanguageManager.lang().get("gui_mailbox_failed_to_give_mail_item"))
 
                         main()

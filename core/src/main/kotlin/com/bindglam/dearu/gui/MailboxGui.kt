@@ -2,6 +2,7 @@ package com.bindglam.dearu.gui
 
 import com.bindglam.dearu.Mailbox
 import com.bindglam.dearu.manager.LanguageManager
+import com.bindglam.dearu.utils.ItemBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -27,7 +28,7 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
     companion object {
         private const val ITEMS_PER_PAGE = 9*4
 
-        private val BLANK_SLOT = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE).apply { editMeta { meta -> meta.isHideTooltip = true } }
+        private val BLANK_SLOT = ItemBuilder.of(Material.GRAY_STAINED_GLASS_PANE).hideTooltip().build()
 
         private val MAIL_ID_KEY = NamespacedKey("mailbox", "mail_id")
     }
@@ -54,10 +55,10 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
 
         frame()
 
-        inventory.setItem(9*2+4, ItemStack.of(Material.CLOCK).apply { editMeta { meta ->
-            meta.displayName(LanguageManager.lang().get("gui_mailbox_loading_icon_name").decoration(TextDecoration.ITALIC, false))
-            meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_loading_icon_description").decoration(TextDecoration.ITALIC, false)))
-        } })
+        inventory.setItem(9*2+4, ItemBuilder.of(Material.CLOCK)
+            .displayName(LanguageManager.lang().get("gui_mailbox_loading_icon_name").decoration(TextDecoration.ITALIC, false))
+            .lore(listOf(LanguageManager.lang().get("gui_mailbox_loading_icon_description").decoration(TextDecoration.ITALIC, false)))
+            .build())
     }
 
     private fun main() {
@@ -65,14 +66,14 @@ class MailboxGui(private val plugin: JavaPlugin, private val mailbox: Mailbox) :
 
         mailbox.mails(ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).thenAccept { mails ->
             inventory.setItem(9*2+4, null)
-            inventory.setItem(9*5, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
-                meta.displayName(LanguageManager.lang().get("gui_mailbox_previous_page_button_name").decoration(TextDecoration.ITALIC, false))
-                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_previous_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
-            } })
-            inventory.setItem(9*5+8, ItemStack.of(Material.ARROW).apply { editMeta { meta ->
-                meta.displayName(LanguageManager.lang().get("gui_mailbox_next_page_button_name").decoration(TextDecoration.ITALIC, false))
-                meta.lore(listOf(LanguageManager.lang().get("gui_mailbox_next_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
-            } })
+            inventory.setItem(9*5, ItemBuilder.of(Material.ARROW)
+                .displayName(LanguageManager.lang().get("gui_mailbox_previous_page_button_name").decoration(TextDecoration.ITALIC, false))
+                .lore(listOf(LanguageManager.lang().get("gui_mailbox_previous_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
+                .build())
+            inventory.setItem(9*5+8, ItemBuilder.of(Material.ARROW)
+                .displayName(LanguageManager.lang().get("gui_mailbox_next_page_button_name").decoration(TextDecoration.ITALIC, false))
+                .lore(listOf(LanguageManager.lang().get("gui_mailbox_next_page_button_description", "page" to page+1).decoration(TextDecoration.ITALIC, false)))
+                .build())
 
             for(i in 0..<ITEMS_PER_PAGE) {
                 val mail = mails[i]

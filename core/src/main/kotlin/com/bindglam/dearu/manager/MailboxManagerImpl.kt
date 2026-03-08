@@ -17,7 +17,7 @@ object MailboxManagerImpl : Managerial, MailboxManager {
 
         Bukkit.getAsyncScheduler().runAtFixedRate(context.plugin, { _ ->
             DatabaseManager.sqlDatabase.getResource { connection ->
-                val expiryDaysAgo = java.sql.Timestamp(System.currentTimeMillis() - (Mail.EXPIRY_DAYS * 24 * 60 * 60 * 1000))
+                val expiryDaysAgo = java.sql.Timestamp(System.currentTimeMillis() - (Mail.EXPIRY_DAYS * 24L * 60L * 60L * 1000L))
                 connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE createdAt < ?").use { statement ->
                     statement.setTimestamp(1, expiryDaysAgo)
                     statement.executeUpdate()

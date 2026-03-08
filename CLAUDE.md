@@ -72,8 +72,6 @@ These libraries are provided by the server/environment:
 - **DatabaseLib** (`com.github.bindglam:DatabaseLib:1.0.4`) - Database abstraction
 - **semver4j** (`org.semver4j:semver4j:6.0.0`) - Version comparison
 
-The project also depends on **Vault** (via modrinth plugin download) for economy integration.
-
 ## Shadow Plugin
 
 The shadow task relocates Kotlin dependencies to `com.bindglam.dearu.shaded.kotlin` and excludes JetBrains annotations.
